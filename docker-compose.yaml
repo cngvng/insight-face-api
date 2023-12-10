@@ -1,0 +1,46 @@
+version: "3"
+services:
+  detector-insightface:
+    build:
+      context: "detector-insightface"
+      args:
+        # for CPU
+        # BASE_IMAGE: "ubuntu:20.04"
+        # COMPUTING_DEVICE: "cpu"
+        # for GPU
+        BASE_IMAGE: "nvidia/cuda:11.0.3-cudnn8-devel-ubuntu20.04"
+        COMPUTING_DEVICE: "gpu"
+    ports:
+      - "8000:8000"
+    # volumes:
+      # - "./detector-insightface:/mnt/workspace" # DEBUG:
+    # working_dir: "/mnt/workspace" # DEBUG:
+    # command: "/bin/bash" # DEBUG:
+    # command: "uvicorn --reload --host=0.0.0.0 --app-dir=src main:app" # DEBUG:
+  browser:
+    build: "browser"
+    ports:
+      - "8001:3000"
+    environment:
+      DETECTOR_BASE_URL: http://detector-insightface:8000
+    # volumes:
+      # - "./browser:/mnt/workspace" # DEBUG:
+    # working_dir: "/mnt/workspace/app" # DEBUG:
+    # command: "/bin/bash" # DEBUG:
+    # command: "npm run dev" # DEBUG:
+  video-analyzer:
+    build: "video-analyzer"
+    volumes:
+      - "./video-analyzer:/mnt/workspace" # DEBUG:
+    working_dir: "/mnt/workspace" # DEBUG:
+    command: "/bin/bash" # DEBUG:
+  video-overlay:
+    build: "video-overlay"
+    user: "1000:1000"
+    ports:
+      - "8002:3000"
+    # volumes:
+      # - "./video-overlay:/mnt/workspace" # DEBUG:
+    # working_dir: "/mnt/workspace/app" # DEBUG:
+    # command: "/bin/bash" # DEBUG:
+    # command: "npm run dev" # DEBUG:
